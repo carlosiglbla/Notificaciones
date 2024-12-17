@@ -9,6 +9,7 @@ import android.content.pm.PackageManager;
 import android.os.Bundle;
 
 import androidx.activity.EdgeToEdge;
+import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.core.app.ActivityCompat;
 import androidx.core.app.NotificationCompat;
@@ -31,10 +32,14 @@ public class MainActivity extends AppCompatActivity {
         setContentView(R.layout.activity_main);
 
         crearCanalDeNoficiacion();
+        permisos();
+        findViewById(R.id.btnNotificacion).setOnClickListener(view -> mostrarNotificaciones());
+    }
 
-        findViewById(R.id.btnNotificacion).setOnClickListener(view -> {
-            mostrarNotificaciones();
-        });
+    private void permisos() {
+        if(checkSelfPermission("android.permission.RECEIVE_SMS")!= PackageManager.PERMISSION_GRANTED){
+            requestPermissions(new String[]{"android.permission.RECEIVE_SMS"},1);
+        }
     }
 
     private void crearCanalDeNoficiacion() {
@@ -42,6 +47,7 @@ public class MainActivity extends AppCompatActivity {
         String description = "Canal sobre las notificaciones en Android";
         int importance = NotificationManager.IMPORTANCE_DEFAULT;
         NotificationChannel notificationChannel = new NotificationChannel(ID_CANAL, nombreCanal, importance);
+        notificationChannel.setDescription(description);
         NotificationManager notificationManager = (NotificationManager) getSystemService(Context.NOTIFICATION_SERVICE);
         notificationManager.createNotificationChannel(notificationChannel);
     }
@@ -126,7 +132,7 @@ public class MainActivity extends AppCompatActivity {
     }
 
     @Override
-    public void onRequestPermissionsResult(int requestCode, String[] permissions, int[] grantResults) {
+    public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions, @NonNull int[] grantResults) {
         super.onRequestPermissionsResult(requestCode, permissions, grantResults);
 
         if (requestCode == 101) { // Código que usaste al solicitar el permiso
